@@ -93,6 +93,58 @@ input.inline.wide { width: 64px; }
 #overlay { display: block; margin: 0 auto; }
 #overlay.picking { cursor: crosshair; }
 
+/* 탭 */
+.tabs { display: flex; gap: 4px; padding-top: 10px; border-bottom: 1px solid var(--line); }
+.tab { padding: 8px 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--muted); font-weight: 700; text-decoration: none; }
+.tab:hover { color: var(--text); }
+.tab.on { color: var(--text); border-bottom-color: var(--switch); }
+[hidden] { display: none !important; }
+
+/* 분배 계산기 */
+.split { margin-top: 12px; --send: var(--ok); --final: var(--link); }
+.split-top { display: grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap: 16px; margin-top: 14px; align-items: start; }
+.price { display: flex; flex-direction: column; gap: 4px; }
+.price input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.price input:focus { outline: 2px solid color-mix(in srgb, var(--switch) 35%, transparent); border-color: var(--switch); }
+.price input.bad { border-color: var(--danger); }
+.price-read { font-size: 13px; font-weight: 700; color: var(--link); }
+.split-sum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.split-sum .stat { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.split-sum .hero { border-color: color-mix(in srgb, var(--final) 45%, var(--line)); background: color-mix(in srgb, var(--final) 10%, var(--card)); }
+.split-sum .hero .val { font-size: 17px; font-weight: 800; color: var(--final); }
+.split-warn { color: var(--danger); font-size: 13px; font-weight: 700; margin: 10px 0 0; }
+
+.mrow { display: grid; grid-template-columns: 52px minmax(90px, 1fr) 56px 82px minmax(180px, 1.6fr) minmax(150px, 1.3fr) minmax(110px, 1fr) 28px; gap: 10px; align-items: center; padding: 8px 6px; border-top: 1px solid var(--line); }
+.mrow.mhead { margin-top: 14px; border-top: 0; font-size: 12px; color: var(--muted); font-weight: 600; padding-bottom: 4px; }
+.mrow > input[type=radio] { justify-self: center; accent-color: var(--switch); width: 16px; height: 16px; }
+.mrow.seller { background: color-mix(in srgb, var(--switch) 5%, transparent); border-radius: 8px; }
+.mrow.out .mname, .mrow.out .num { opacity: .45; }
+.mname { min-width: 0; padding: 4px 8px; border: 1px solid transparent; border-radius: 6px; background: none; font-weight: 700; }
+.mname:hover, .mname:focus { border-color: var(--line); background: var(--bg); }
+.other { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.other input { accent-color: var(--switch); width: 16px; height: 16px; margin: 0; }
+.other small { color: var(--muted); font-size: 11.5px; }
+.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.num i { font-style: normal; color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.mhead .num { text-align: right; }
+.send { display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; font-size: 16px; font-weight: 800; color: var(--send); background: color-mix(in srgb, var(--send) 10%, var(--card)); }
+.final { padding: 6px 8px; border-radius: 8px; font-size: 15px; font-weight: 800; color: var(--final); background: color-mix(in srgb, var(--final) 9%, var(--card)); }
+.fee { color: var(--muted); font-size: 12.5px; }
+.copy { padding: 2px 8px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--send) 40%, var(--line)); background: var(--card); color: var(--send); font-size: 11.5px; font-weight: 700; cursor: pointer; }
+.copy:hover { background: color-mix(in srgb, var(--send) 14%, var(--card)); }
+.split-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.split-foot .spacer { flex: 1; }
+.split-foot b { color: var(--text); margin-left: 4px; }
+.btn:disabled, .icon-btn:disabled { opacity: .4; cursor: default; }
+@media (max-width: 900px) {
+  .split-top { grid-template-columns: 1fr; }
+  .split-sum { grid-template-columns: 1fr 1fr; }
+  .mrow { grid-template-columns: 28px 1fr 44px 70px 28px; }
+  .mrow.mhead { display: none; }
+  .mrow .send, .mrow .final { grid-column: 2 / -1; }
+  .mrow .fee { display: none; }
+}
+
 #log { max-height: 220px; overflow: auto; font-size: 12px; font-family: ui-monospace, Consolas, monospace; margin-top: 8px; }
 #log div { padding: 3px 0; border-bottom: 1px dashed var(--line); }
 .steps { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
