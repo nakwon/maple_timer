@@ -61,7 +61,7 @@ export function SplitPanel() {
 
       <div className="mrow mhead">
         <span>판매자</span><span>이름</span><span>참여</span><span>다른 서버</span>
-        <span className="num">보내야 할 금액</span><span className="num">최종 메소</span><span className="num">전달 수수료</span><span></span>
+        <span className="num">보내야 할 금액</span><span className="num">전달 수수료</span><span></span>
       </div>
       {st.members.map(m => {
         const p = byId.get(m.id);
@@ -77,7 +77,6 @@ export function SplitPanel() {
             <span className="num send">
               {!p ? <i>—</i> : p.seller ? <i>보낼 필요 없음</i> : <>{meso(p.send)}<CopyButton value={p.send} /></>}
             </span>
-            <span className="num final">{p ? meso(p.final) : <i>—</i>}</span>
             <span className="num fee">{p && !p.seller ? meso(p.fee) : ''}</span>
             <button className="icon-btn" aria-label="파티원 빼기" disabled={st.members.length <= 1}
               onClick={() => splitStore.update(s => {
