@@ -37,7 +37,7 @@ export function RunePanel() {
         </div>
         <div className="more" hidden={!more}>
           <div className="fields">
-            <label className="field">룬 색 <span>rgb(201, 118, 225) 고정</span></label>
+            <label className="field">룬 색 <span>rgb({RUNE_COLOR.join(', ')}) 고정</span></label>
             <label className="field">색 허용 오차 <NumInput min="1" max="200" value={R.tol} onValue={v => setRune(r => { r.tol = v; })} /></label>
             <label className="field">덩어리 최소 픽셀 수 <NumInput min="1" value={R.minPx} onValue={v => setRune(r => { r.minPx = v; })} /></label>
             <label className="field">덩어리 최대 픽셀 수 <NumInput min="1" value={R.maxPx} onValue={v => setRune(r => { r.maxPx = v; })} /></label>

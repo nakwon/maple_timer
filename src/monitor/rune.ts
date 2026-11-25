@@ -43,7 +43,7 @@ export class RuneTracker {
     this.centroid = blob.best ? [m.x + blob.best.cx, m.y + blob.best.cy] : null;
     // 3) 나타날 때는 R.frames번 연속으로 보여야 인정 (잠깐 스친 보라색 무시)
     const changed = this.debounce(!!blob.best, blob.best ? R.frames : STREAK);
-    if (changed && this.present) { this.lastAlert = now; speak(R.message); log(`🔮 룬 감지 (${blob.best!.n}px, ${blob.best!.w}×${blob.best!.h})`); flash('runePanel'); }
+    if (changed && this.present) { this.lastAlert = now; speak(R.message); log(`🔮 룬 감지 (${blob.best!.n}px, ${blob.best!.w}×${blob.best!.h}, rgb(${blob.best!.rgb}))`); flash('runePanel'); }
     else if (changed) log('룬 사라짐');
     else if (this.present && R.repeat > 0 && now - this.lastAlert >= R.repeat * 1000) { this.lastAlert = now; speak(R.message); log('🔮 룬 반복 알림'); }
   }

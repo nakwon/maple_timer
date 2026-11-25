@@ -1,35 +1,40 @@
 import { components, type Rect } from './geometry';
 
-export const RUNE_COLOR = [201, 118, 225]; // 미니맵 룬 아이콘 색 (고정)
+export const RUNE_COLOR = [221, 102, 255]; // 미니맵 룬 아이콘(보라 마름모) 안쪽 색 (실제 화면에서 잰 값)
 const RUNE_MEAN_TOL = 28;   // 덩어리 평균 색이 룬 색과 이만큼 이내여야 룬 (다른 색 아이콘의 가장자리 번짐 걸러냄)
-const RUNE_MIN_SIDE = 4;    // 룬 아이콘은 최소 4×4px (실제 6×6 정도)
+const RUNE_MIN_SIDE = 4;    // 룬 아이콘은 최소 4×4px (실제 7×7)
+const RUNE_SYM = 0.6;       // 마름모(◆)는 위·아래 절반 픽셀 수가 거의 같음 (▼ 표시는 0.4 정도)
 
 export interface RuneBlobLimits { minPx: number; maxPx: number; maxSize: number }
-export interface RuneBlob { n: number; w: number; h: number; cx: number; cy: number }
+export interface RuneBlob { n: number; w: number; h: number; cx: number; cy: number; rgb: number[] }
 
 // 룬 아이콘 조건(픽셀 수, 크기, 가로세로 비율, 채움 비율)에 맞는 덩어리 중 가장 큰 것을 고름
 // (d: 미니맵 픽셀. 덩어리 평균 색 확인용)
 export function findRuneBlob(mask: Uint8Array, W: number, H: number, R: RuneBlobLimits, d: Uint8ClampedArray) {
   let total = 0, accepted = 0, rejected = 0, best: RuneBlob | null = null;
-  // 덩어리에 속한 픽셀들의 평균 색이 룬 색에서 얼마나 떨어졌는지
-  const meanDist = (x0: number, y0: number, x1: number, y1: number) => {
-    let r = 0, g = 0, b = 0, k = 0;
+  // 덩어리 픽셀들의 평균 색, 그리고 위/아래 절반에 든 픽셀 수 (가운데 줄은 빼고)
+  const measure = (x0: number, y0: number, x1: number, y1: number) => {
+    let r = 0, g = 0, b = 0, k = 0, top = 0, bot = 0;
+    const my = (y0 + y1) / 2;
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
       const p = y * W + x; if (!mask[p]) continue;
       r += d[p * 4]; g += d[p * 4 + 1]; b += d[p * 4 + 2]; k++;
+      if (y < my) top++; else if (y > my) bot++;
     }
-    return Math.hypot(r / k - RUNE_COLOR[0], g / k - RUNE_COLOR[1], b / k - RUNE_COLOR[2]);
+    return { rgb: [r / k, g / k, b / k].map(Math.round), dist: Math.hypot(r / k - RUNE_COLOR[0], g / k - RUNE_COLOR[1], b / k - RUNE_COLOR[2]), symV: Math.min(top, bot) / Math.max(top, bot, 1) };
   };
   for (const { n, sx, sy, x0, y0, x1, y1 } of components(mask, W, H)) {
     total += n;
     if (n < R.minPx) continue; // 점 몇 개짜리 잡음은 판정 대상에서도 제외
     const w = x1 - x0 + 1, h = y1 - y0 + 1, ratio = w / h, fill = n / (w * h);
-    // 룬 아이콘은 정사각형에 가까운 4px 이상 덩어리이고, 평균 색이 룬 색에 가까움
-    const ok = n <= R.maxPx && w <= R.maxSize && h <= R.maxSize && w >= RUNE_MIN_SIDE && h >= RUNE_MIN_SIDE
-      && ratio >= 0.6 && ratio <= 1.7 && fill >= 0.25 && meanDist(x0, y0, x1, y1) <= RUNE_MEAN_TOL;
-    if (!ok) { rejected++; continue; }
+    if (!(n <= R.maxPx && w <= R.maxSize && h <= R.maxSize && w >= RUNE_MIN_SIDE && h >= RUNE_MIN_SIDE
+      && ratio >= 0.6 && ratio <= 1.7 && fill >= 0.25)) { rejected++; continue; }
+    // 룬 아이콘은 위아래가 대칭인 마름모(◆)이고 평균 색이 룬 색에 가까움
+    // → 보라색 ▼ 표시(위가 넓고 아래가 좁음)나 다른 색 아이콘 가장자리는 여기서 걸러짐
+    const s = measure(x0, y0, x1, y1);
+    if (s.dist > RUNE_MEAN_TOL || s.symV < RUNE_SYM) { rejected++; continue; }
     accepted++;
-    if (!best || n > best.n) best = { n, w, h, cx: sx / n, cy: sy / n };
+    if (!best || n > best.n) best = { n, w, h, cx: sx / n, cy: sy / n, rgb: s.rgb };
   }
   return { total, accepted, rejected, best };
 }
