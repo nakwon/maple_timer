@@ -13,13 +13,9 @@ export const meso = (n: number) => {
   return sign + (parts.join(' ') || '0');
 };
 
-// "12억 3456만", "1,234,567,890", "12.5억" 같은 입력을 메소 숫자로 (못 읽으면 null)
-export function parseMeso(text: string): number | null {
-  const s = text.replace(/[,\s]/g, '');
-  if (!s) return 0;
-  const m = s.match(/^(?:(\d+(?:\.\d+)?)억)?(?:(\d+(?:\.\d+)?)만)?(\d+)?$/);
-  if (!m || !(m[1] || m[2] || m[3])) return null;
-  return Math.round((parseFloat(m[1] || '0') * 1e8) + (parseFloat(m[2] || '0') * 1e4) + parseFloat(m[3] || '0'));
-}
+// 억 단위 입력에서 숫자와 소수점(첫 번째 하나만) 외에는 지움: "12.5억" → "12.5"
+export const eokText = (text: string) => { const [a, ...b] = text.replace(/[^\d.]/g, '').split('.'); return b.length ? `${a}.${b.join('')}` : a; };
+// 억 단위 숫자를 메소로: "12.5" → 1250000000 ("."만 있으면 0)
+export const parseEok = (text: string) => Math.round((parseFloat(text) || 0) * 1e8);
 
 export const clock =(ms: number) => ms ? new Date(ms).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--';

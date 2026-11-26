@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { meso, parseMeso } from '../format';
+import { eokText, meso, parseEok } from '../format';
 import { useToggle } from '../hooks';
 import { computeSplit, MAX_MEMBERS, sendRate, splitStore, useSplit, type Member } from '../split';
 import { MoreButton, NumInput } from './controls';
@@ -8,15 +8,16 @@ const pct = (r: number) => `${(r * 100).toFixed(2).replace(/\.?0+$/, '')}%`;
 
 function PriceInput() {
   const { price } = useSplit();
-  const [text, setText] = useState(() => price ? String(price) : '');
-  const parsed = parseMeso(text);
+  const [text, setText] = useState(() => price ? String(+(price / 1e8).toFixed(4)) : '');
   return (
     <label className="price">
-      <span className="lbl">경매장에 올린 금액</span>
-      <input type="text" inputMode="numeric" placeholder="예: 1200000000 또는 12억" value={text}
-        className={parsed == null ? 'bad' : ''}
-        onChange={e => { setText(e.target.value); const v = parseMeso(e.target.value); if (v != null) splitStore.update(s => { s.price = v; }); }} />
-      <span className="price-read">{parsed == null ? '숫자나 "12억 3456만"처럼 입력해 주세요' : `${meso(price)} 메소`}</span>
+      <span className="lbl">경매장에 올린 금액 (억)</span>
+      <span className="price-box">
+        <input type="text" inputMode="decimal" placeholder="예: 12.5" value={text}
+          onChange={e => { const t = eokText(e.target.value); setText(t); splitStore.update(s => { s.price = parseEok(t); }); }} />
+        <span className="unit">억</span>
+      </span>
+      <span className="price-read">{meso(price)} 메소</span>
     </label>
   );
 }

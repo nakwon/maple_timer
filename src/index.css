@@ -106,7 +106,9 @@ input.inline.wide { width: 64px; }
 .price { display: flex; flex-direction: column; gap: 4px; }
 .price input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
 .price input:focus { outline: 2px solid color-mix(in srgb, var(--switch) 35%, transparent); border-color: var(--switch); }
-.price input.bad { border-color: var(--danger); }
+.price-box { display: flex; align-items: center; gap: 8px; }
+.price-box input { flex: 1; min-width: 0; }
+.price-box .unit { font-size: 18px; font-weight: 800; color: var(--muted); }
 .price-read { font-size: 13px; font-weight: 700; color: var(--link); }
 .split-sum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .split-sum .stat { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
